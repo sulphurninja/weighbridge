@@ -11,7 +11,6 @@ import {
 } from "@/lib/fonts";
 
 // Favicon
-import Favicon from '@/public/assets/favicon/favicon.ico';
 
 // Vercel Analytics
 import { Analytics } from "@vercel/analytics/react";
@@ -38,7 +37,6 @@ export const metadata: Metadata = {
     title: "Bill Printer | A3M NextGen",
     description:
         "Create invoices effortlessly with Bill Printer!",
-    icons: [{ rel: "icon", url: Favicon.src }],
     keywords: ROOTKEYWORDS,
     viewport: "width=device-width, initial-scale=1",
     robots: {
