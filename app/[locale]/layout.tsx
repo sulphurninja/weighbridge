@@ -11,7 +11,7 @@ import {
 } from "@/lib/fonts";
 
 // Favicon
-import Favicon from "@/public/assets/favicon/favicon.ico";
+import Favicon from "../../public/assets/favicon/favicon.ico";
 
 // Vercel Analytics
 import { Analytics } from "@vercel/analytics/react";

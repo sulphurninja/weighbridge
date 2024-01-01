@@ -22,7 +22,7 @@ import {
 } from "@/app/components";
 
 // Template images
-import template1 from "@/public/assets/img/invoice-1-example.png";
+import template1 from "../../../../public/assets/img/invoice-1-example.png";
 
 // Icons
 import { Check } from "lucide-react";
