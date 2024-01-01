@@ -159,7 +159,7 @@ const Charges = () => {
                             </p>
 
                             <small className="text-sm font-medium text-destructive">
-                                {errors.details?.totalAmount?.message}
+                                {/* {errors?.details?.totalAmount?.message} */}
                             </small>
                         </div>
                     </div>

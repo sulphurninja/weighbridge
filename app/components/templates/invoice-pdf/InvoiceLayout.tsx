@@ -12,13 +12,13 @@ export default function InvoiceLayout({ data, children }: InvoiceLayoutProps) {
     const { sender, receiver, details } = data;
 
     // Instead of fetching all signature fonts, get the specific one user selected.
-    const fontHref = details.signature?.fontFamily
+    const fontHref = details?.signature?.fontFamily
         ? `https://fonts.googleapis.com/css2?family=${details?.signature?.fontFamily}&display=swap`
         : "";
 
     const head = (
         <>
-            {details.signature?.fontFamily && (
+            {details?.signature?.fontFamily && (
                 <>
                     <link
                         rel="preconnect"

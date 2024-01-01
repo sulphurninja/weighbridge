@@ -236,13 +236,13 @@ export const InvoiceContextProvider = ({
                 );
 
                 const formValues = getValues();
-                formValues.details.updatedAt = updatedDate;
+                // formValues?.details?.updatedAt = updatedDate;
 
                 const existingInvoiceIndex = savedInvoices.findIndex(
                     (invoice: InvoiceType) => {
                         return (
-                            invoice.details.invoiceNumber ===
-                            formValues.details.invoiceNumber
+                            invoice.details?.invoiceNumber ===
+                            formValues.details?.invoiceNumber
                         );
                     }
                 );
@@ -299,7 +299,7 @@ export const InvoiceContextProvider = ({
         const fd = new FormData();
         fd.append("email", email);
         fd.append("invoicePdf", invoicePdf, "invoice.pdf");
-        fd.append("invoiceNumber", getValues().details.invoiceNumber);
+        fd.append("invoiceNumber", getValues().details?.invoiceNumber);
 
         return fetch(SEND_PDF_API, {
             method: "POST",

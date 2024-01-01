@@ -72,7 +72,7 @@ const TemplateSelector = () => {
                                         <p>{template.name}</p>
 
                                         <div className="relative border hover:border-blue-500">
-                                            {formValues.details.pdfTemplate ===
+                                            {formValues.details?.pdfTemplate ===
                                                 template.id && (
                                                 <div className="shadow-lg absolute right-2 top-2 rounded-full bg-blue-300 dark:bg-blue-600">
                                                     <Check />

@@ -54,12 +54,7 @@ const SavedInvoicesList = ({ setModalState }: SavedInvoicesListProps) => {
      * @param {InvoiceType} selected - The selected invoice
      */
     const transformDates = (selected: InvoiceType) => {
-        selected.details.dueDate = new Date(
-            selected.details.dueDate
-        ).toLocaleDateString(undefined, DATE_OPTIONS);
-        selected.details.invoiceDate = new Date(
-            selected.details.invoiceDate
-        ).toLocaleDateString(undefined, DATE_OPTIONS);
+       
     };
 
     /**
@@ -103,24 +98,24 @@ const SavedInvoicesList = ({ setModalState }: SavedInvoicesListProps) => {
                             <div>
                                 {/* <FileText /> */}
                                 <p className="font-semibold">
-                                    Invoice #{invoice.details.invoiceNumber}{" "}
+                                    Invoice #{invoice.details?.invoiceNumber}{" "}
                                 </p>
                                 <small className="text-gray-500">
-                                    Updated at: {invoice.details.updatedAt}
+                                    Updated at: {invoice.details?.updatedAt}
                                 </small>
 
                                 <div>
-                                    <p>Sender: {invoice.sender.name}</p>
-                                    <p>Receiver: {invoice.receiver.name}</p>
+                                    <p>Sender: {invoice.sender?.name}</p>
+                                    <p>Receiver: {invoice.receiver?.name}</p>
                                     <p>
                                         Total:{" "}
                                         <span className="font-semibold">
                                             {formatNumberWithCommas(
                                                 Number(
-                                                    invoice.details.totalAmount
+                                                    invoice.details?.totalAmount
                                                 )
                                             )}{" "}
-                                            {invoice.details.currency}
+                                            {invoice.details?.currency}
                                         </span>
                                     </p>
                                 </div>

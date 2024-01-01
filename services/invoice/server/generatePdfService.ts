@@ -26,7 +26,12 @@ export async function generatePdfService(req: NextRequest) {
         const ReactDOMServer = (await import("react-dom/server")).default;
 
         // Get the selected invoice template
-        const templateId = body.details.pdfTemplate;
+        const templateId = body?.details?.pdfTemplate;
+
+        if (templateId === undefined) {
+            throw new Error("PDF template ID is undefined");
+        }
+
         const InvoiceTemplate = await getInvoiceTemplate(templateId);
 
         // Read the HTML template from a React component
