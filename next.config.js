@@ -20,8 +20,3 @@ const nextConfig = {
 
 module.exports = nextConfig;
 
-module.exports={
-  env:{
-   "NODE_ENV":"production",
-}
-}
