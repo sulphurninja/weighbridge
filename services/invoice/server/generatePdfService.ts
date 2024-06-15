@@ -49,10 +49,10 @@ export async function generatePdfService(req: NextRequest) {
                 args: chromium.args,
                 defaultViewport: chromium.defaultViewport,
                 executablePath: await chromium.executablePath(
-                    `https://github.com/Sparticuz/chromium/releases/download/v119.0.0/chromium-v119.0.0-pack.tar`
+                    `https://github.com/Sparticuz/chromium/releases/download/v122.0.0/chromium-v122.0.0-pack.tar`
                 ),
-                headless:
-                    chromium.headless === "new" ? true : chromium.headless,
+                headless: true,
+                ignoreHTTPSErrors: true,
             });
         } else if (ENV === "development") {
             const puppeteer = await import("puppeteer");
