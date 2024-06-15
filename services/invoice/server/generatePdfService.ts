@@ -67,7 +67,7 @@ export async function generatePdfService(req: NextRequest) {
         }
 
         const page = await browser.newPage();
-
+        console.log(htmlTemplate, 'html');
         // Set the HTML content of the page
         await page.setContent(await htmlTemplate, {
             // * "waitUntil" prop makes fonts work in templates
@@ -84,6 +84,7 @@ export async function generatePdfService(req: NextRequest) {
             format: "a4",
             printBackground: true,
         });
+        console.log("Generated PDF Buffer:", pdf.toString("base64"));
 
         // Close the Puppeteer browser
         await browser.close();
