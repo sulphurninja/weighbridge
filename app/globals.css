@@ -75,7 +75,9 @@
     }
 }
 
-
+body {
+    font-family: "Outfit" sans-serif;
+}
 
 :focus {
     outline: none;
