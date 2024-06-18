@@ -2,13 +2,13 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 // Fonts
-import {
-    alexBrush,
-    dancingScript,
-    greatVibes,
-    outfit,
-    parisienne,
-} from "@/lib/fonts";
+// import {
+//     alexBrush,
+//     dancingScript,
+//     greatVibes,
+//     outfit,
+//     parisienne,
+// } from "@/lib/fonts";
 
 // Favicon
 
@@ -77,7 +77,7 @@ export default async function LocaleLayout({
                 />
             </head>
             <body
-                className={`${outfit.className} ${dancingScript.variable} ${parisienne.variable} ${greatVibes.variable} ${alexBrush.variable} antialiased bg-slate-100 dark:bg-slate-800`}
+                className={` antialiased bg-slate-100 dark:bg-slate-800`}
             >
                 <NextIntlClientProvider locale={locale} messages={messages}>
                     <Providers>
