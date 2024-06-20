@@ -1,9 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
-import fetch from "node-fetch";
+
+// Chromium
+import chromium from "@sparticuz/chromium";
+
+// Helpers
 import { getInvoiceTemplate } from "@/lib/helpers";
+
+// Types
 import { InvoiceType } from "@/types";
 
-const PDFSHIFT_API_KEY ='sk_3246f0a976d3e15e8e927e66454d31a831553f8c';
+const ENV = process.env.NODE_ENV;
 
 /**
  * Generate a PDF document of an invoice based on the provided data.
@@ -13,8 +19,7 @@ const PDFSHIFT_API_KEY ='sk_3246f0a976d3e15e8e927e66454d31a831553f8c';
  * @throws {Error} If there is an error during the PDF generation process.
  * @returns {Promise<NextResponse>} A promise that resolves to a NextResponse object containing the generated PDF.
  */
-
-export async function generatePdfService(req: NextRequest): Promise<NextResponse> {
+export async function generatePdfService(req: NextRequest) {
     const body: InvoiceType = await req.json();
 
     try {
@@ -25,21 +30,57 @@ export async function generatePdfService(req: NextRequest): Promise<NextResponse
 
         if (templateId === undefined) {
             throw new Error("PDF template ID is undefined");
-        }
+             }
 
         const InvoiceTemplate = await getInvoiceTemplate(templateId);
 
         // Read the HTML template from a React component
-        const htmlTemplate = ReactDOMServer.renderToStaticMarkup(InvoiceTemplate(body));
+        const htmlTemplate = ReactDOMServer.renderToStaticMarkup(
+            InvoiceTemplate(body)
+        );
 
-        console.log(htmlTemplate, 'html temp');
+        // Create a browser instance
+        let browser;
 
-        // Add Tailwind CSS to the HTML template
-        const htmlWithTailwind = `
+        // Launch the browser in production or development mode depending on the environment
+        if (ENV === "production") {
+            const puppeteer = await import("puppeteer-core");
+            browser = await puppeteer.launch({
+                 args: chromium.args,
+                defaultViewport: chromium.defaultViewport,
+                executablePath: await chromium.executablePath(
+                    `https://github.com/Sparticuz/chromium/releases/download/v119.0.0/chromium-v119.0.0-pack.tar`
+                ),
+                headless:
+                    chromium.headless === "new" ? true : chromium.headless,
+            });
+        } else if (ENV === "development") {
+            const puppeteer = await import("puppeteer");
+            browser = await puppeteer.launch({
+                args: ["--no-sandbox", "--disable-setuid-sandbox"],
+                headless: "new",
+            });
+                }
+
+        if (!browser) {
+            throw new Error("Failed to launch browser");
+        }
+
+        const page = await browser.newPage();
+
+        // Include Google Fonts in the HTML
+        const htmlWithGoogleFonts = `
             <!DOCTYPE html>
-            <html>
+            <html lang="en">
             <head>
-                <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
+                 <style>
+                    body {
+                        font-family: 'Roboto', sans-serif;
+                    }
+                </style>
             </head>
             <body>
                 ${htmlTemplate}
@@ -47,28 +88,29 @@ export async function generatePdfService(req: NextRequest): Promise<NextResponse
             </html>
         `;
 
-        // Use pdfshift API to generate PDF
-        const response = await fetch("https://api.pdfshift.io/v3/convert/pdf", {
-            method: "POST",
-            headers: {
-                Authorization: 'Basic ' + Buffer.from(`api:${PDFSHIFT_API_KEY}`).toString('base64'),
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ source: htmlWithTailwind })
+        // Set the HTML content of the page and wait until the DOM content is loaded
+        await page.setContent(htmlWithGoogleFonts, {
+            waitUntil: "domcontentloaded",
+            });
+
+        // Add Tailwind CSS
+        await page.addStyleTag({
+            url: "https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css",
         });
 
-        if (!response.ok) {
-            throw new Error(`PDF generation failed: ${response.statusText}`);
-        }
-
-        const pdfBuffer = await response.buffer();
-
-        console.log("Generated PDF Buffer:", pdfBuffer.toString("base64"));
+        // Ensure fonts are loaded before generating the PDF
+        // Generate the PDF
+        const pdf: Buffer = await page.pdf({
+            format: "a4",
+            printBackground: true,
+        });
+         // Close the Puppeteer browser
+        await browser.close();
 
         // Create a Blob from the PDF data
-        const pdfBlob = new Blob([pdfBuffer], { type: "application/pdf" });
+        const pdfBlob = new Blob([pdf], { type: "application/pdf" });
 
-        const nextResponse = new NextResponse(pdfBlob, {
+        const response = new NextResponse(pdfBlob, {
             headers: {
                 "Content-Type": "application/pdf",
                 "Content-Disposition": "inline; filename=invoice.pdf",
@@ -76,10 +118,10 @@ export async function generatePdfService(req: NextRequest): Promise<NextResponse
             status: 200,
         });
 
-        return nextResponse;
+        return response;
     } catch (error) {
         console.error(error);
-
+        
         // Return an error response
         return new NextResponse(`Error generating PDF: \n${error}`, {
             status: 500,
